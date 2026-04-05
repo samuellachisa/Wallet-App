@@ -67,9 +67,7 @@ src/
 
 Edit **`src/data/wallet.json`** (and keep the shape aligned with `WalletData` in `src/types/wallet.ts`). Rebuild or refresh the dev server to see changes.
 
-## Cursor / AI rules
 
-Project expectations for UI fidelity, spec coverage, and build/test hygiene are summarized in [`.cursor/rules/wallet-app-quality.mdc`](.cursor/rules/wallet-app-quality.mdc).
 
 ## License
 
