@@ -63,13 +63,27 @@ src/
 └── types/                  # Shared TypeScript types
 ```
 
+## Screenshots
+
+Images live in [`docs/screenshots/`](docs/screenshots/). 
+
+### Dashboard / transaction list (`/`)
+
+<img src="./docs/screenshots/transaction-list.png" alt="Wallet dashboard and latest transactions list" width="390" />
+
+[Open `transaction-list.png`](./docs/screenshots/transaction-list.png)
+
+### Transaction detail (`/transactions/:id`)
+
+<img src="./docs/screenshots/transaction-detail.png" alt="Transaction detail receipt screen" width="390" />
+
+[Open `transaction-detail.png`](./docs/screenshots/transaction-detail.png)
+
 ## Customizing content
 
 Edit **`src/data/wallet.json`** (and keep the shape aligned with `WalletData` in `src/types/wallet.ts`). Rebuild or refresh the dev server to see changes.
 
-## Cursor / AI rules
 
-Project expectations for UI fidelity, spec coverage, and build/test hygiene are summarized in [`.cursor/rules/wallet-app-quality.mdc`](.cursor/rules/wallet-app-quality.mdc).
 
 ## License
 
