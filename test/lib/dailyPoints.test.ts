@@ -4,7 +4,7 @@ import {
   formatPointsK,
   getSeasonAndDayInSeason,
   pointsForDayInSeason,
-} from './dailyPoints'
+} from '../../src/lib/dailyPoints'
 
 describe('pointsForDayInSeason', () => {
   it('returns 2, 3 for first two days', () => {

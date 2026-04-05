@@ -29,16 +29,16 @@ export function formatTransactionListDate(iso: string, now: Date): string {
   })
 }
 
+/** Receipt-style: `5/26/22, 12:47` (12-hour clock, no AM/PM). */
 export function formatDetailHeaderDateTime(iso: string): string {
   const d = new Date(iso)
-  return d.toLocaleString('en-US', {
-    month: 'numeric',
-    day: 'numeric',
-    year: '2-digit',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  })
+  const month = d.getMonth() + 1
+  const day = d.getDate()
+  const year = String(d.getFullYear()).slice(-2)
+  const h24 = d.getHours()
+  const hour12 = h24 % 12 === 0 ? 12 : h24 % 12
+  const minute = String(d.getMinutes()).padStart(2, '0')
+  return `${month}/${day}/${year}, ${hour12}:${minute}`
 }
 
 const money = new Intl.NumberFormat('en-US', {
@@ -62,7 +62,10 @@ export function listDescription(t: WalletTransaction): string {
   return t.pending ? `Pending - ${base}` : base
 }
 
-/** Authorized user appears before the date label (same line, dot-separated). */
+/** Apple Wallet list uses an en dash with spaces: `Diana – Yesterday`. */
+const EN_DASH = '\u2013'
+
+/** Authorized user before the date (en dash, like the reference screenshot). */
 export function formatDateWithAuthorizedUser(
   iso: string,
   now: Date,
@@ -70,7 +73,20 @@ export function formatDateWithAuthorizedUser(
 ): string {
   const datePart = formatTransactionListDate(iso, now)
   if (authorizedUser) {
-    return `${authorizedUser} · ${datePart}`
+    return `${authorizedUser} ${EN_DASH} ${datePart}`
   }
   return datePart
+}
+
+/** Bank “From …” lines: fixed prefix + ASCII `...` like `From JPMorgan Chase Bank Natio...`. */
+export function formatTransactionListSubtitle(text: string): string {
+  const s = text.trimStart()
+  if (!s.startsWith('From ')) {
+    return text
+  }
+  const max = 30
+  if (s.length <= max) {
+    return s
+  }
+  return `${s.slice(0, max)}...`
 }

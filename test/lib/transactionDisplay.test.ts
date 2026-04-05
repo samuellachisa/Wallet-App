@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import type { WalletTransaction } from '../types/wallet'
+import type { WalletTransaction } from '../../src/types/wallet'
 import {
   formatDateWithAuthorizedUser,
   formatTransactionAmount,
   formatTransactionListDate,
+  formatTransactionListSubtitle,
   listDescription,
-} from './transactionDisplay'
+} from '../../src/lib/transactionDisplay'
 
 function tx(partial: Partial<WalletTransaction>): WalletTransaction {
   return {
@@ -52,7 +53,9 @@ describe('listDescription', () => {
 
 describe('formatTransactionAmount', () => {
   it('adds plus for payments', () => {
-    expect(formatTransactionAmount(tx({ type: 'payment', amount: 174 }))).toMatch(/^\+\$174\.00$/)
+    expect(formatTransactionAmount(tx({ type: 'payment', amount: 174 }))).toMatch(
+      /^\+\$174\.00$/,
+    )
   })
 })
 
@@ -62,7 +65,20 @@ describe('formatDateWithAuthorizedUser', () => {
   it('includes authorized user before date', () => {
     const iso = new Date(2026, 3, 4, 8, 0, 0).toISOString()
     expect(formatDateWithAuthorizedUser(iso, now, 'Alex Kim')).toBe(
-      'Alex Kim · Yesterday',
+      'Alex Kim \u2013 Yesterday',
     )
+  })
+})
+
+describe('formatTransactionListSubtitle', () => {
+  it('returns non-From lines unchanged', () => {
+    expect(formatTransactionListSubtitle('Pending - Card Number Used')).toBe(
+      'Pending - Card Number Used',
+    )
+  })
+
+  it('truncates long From lines with ASCII ellipsis', () => {
+    const s = 'From JPMorgan Chase Bank National Association'
+    expect(formatTransactionListSubtitle(s)).toBe('From JPMorgan Chase Bank Natio...')
   })
 })

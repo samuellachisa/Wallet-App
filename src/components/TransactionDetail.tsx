@@ -1,14 +1,17 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { Link, useParams } from 'react-router-dom'
 import { walletData } from '../data/wallet'
-import { iconForKey } from '../lib/faIconMap'
-import { iconBackgroundForId } from '../lib/transactionIcon'
 import {
   formatDetailHeaderDateTime,
   formatPlainCurrency,
 } from '../lib/transactionDisplay'
 import { MobileShell } from './MobileShell'
+
+const iosBlue = 'text-[#007AFF]'
+const labelGray = 'text-[#8e8e93]'
+const cardRadius = 'rounded-[12px]'
+const cardShadow = 'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)]'
 
 export function TransactionDetail() {
   const { id } = useParams<{ id: string }>()
@@ -18,17 +21,17 @@ export function TransactionDetail() {
   if (!t) {
     return (
       <MobileShell>
-        <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-          <p className="font-medium text-neutral-900">Transaction not found</p>
-          <p className="mt-2 text-sm text-neutral-500">
+        <div className={`${cardRadius} bg-white p-6 text-center ${cardShadow}`}>
+          <p className="font-semibold text-black">Transaction not found</p>
+          <p className={`mt-2 text-[15px] font-normal ${labelGray}`}>
             This receipt is missing or the link is invalid.
           </p>
           <Link
             to="/"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-600"
+            className={`mt-6 inline-flex items-center justify-center ${iosBlue}`}
+            aria-label="Back to transactions"
           >
-            <FontAwesomeIcon icon={faChevronLeft} />
-            Back to transactions
+            <FontAwesomeIcon icon={faAngleLeft} className="text-2xl" />
           </Link>
         </div>
       </MobileShell>
@@ -37,72 +40,52 @@ export function TransactionDetail() {
 
   return (
     <MobileShell>
-      <Link
-        to="/"
-        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600"
-        aria-label="Back to transactions"
-      >
-        <FontAwesomeIcon icon={faChevronLeft} />
-        Back
-      </Link>
+      <div className="relative flex min-h-[calc(100dvh-2rem)] flex-col">
+        <header className="relative z-10 mb-6 h-11 shrink-0">
+          <Link
+            to="/"
+            className={`absolute left-0 top-1/2 flex -translate-y-1/2 items-center justify-center p-2 pl-0 ${iosBlue}`}
+            aria-label="Back to transactions"
+          >
+            <FontAwesomeIcon icon={faAngleLeft} className="text-2xl" />
+          </Link>
+        </header>
 
-      <div className="text-center">
-        <p className="text-3xl font-bold text-neutral-900">
-          {formatPlainCurrency(t.amount)}
-        </p>
-        <p className="mt-1 text-base text-neutral-500">{t.name}</p>
-        <p className="mt-0.5 text-sm text-neutral-500">
-          {formatDetailHeaderDateTime(t.date)}
-        </p>
-        <div
-          className="mx-auto mt-4 flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-inner"
-          style={{ backgroundColor: iconBackgroundForId(t.id) }}
-          aria-hidden
-        >
-          <FontAwesomeIcon icon={iconForKey(t.iconKey)} className="h-7 w-7" />
+        <div className="flex flex-1 flex-col px-0.5">
+          <div className="text-center">
+            <p className="text-[40px] font-bold leading-none tracking-[-0.03em] text-black">
+              {formatPlainCurrency(t.amount)}
+            </p>
+            <p className={`mt-2 text-[17px] font-normal leading-snug ${labelGray}`}>
+              {t.name}
+            </p>
+            <p className={`mt-1 text-[15px] font-normal leading-snug ${labelGray}`}>
+              {formatDetailHeaderDateTime(t.date)}
+            </p>
+          </div>
+
+          <section className={`mt-10 ${cardRadius} bg-white px-4 py-5 ${cardShadow}`}>
+            <p className="text-[17px] font-bold leading-snug text-black">
+              Status: {t.status}
+            </p>
+            <p className={`mt-1.5 text-[15px] font-normal leading-snug ${labelGray}`}>
+              {t.paymentMethod}
+            </p>
+            <hr className="my-5 border-[#e5e5ea]" />
+            <div className="flex items-center justify-between text-[17px] font-bold text-black">
+              <span>Total</span>
+              <span className="tabular-nums">{formatPlainCurrency(t.amount)}</span>
+            </div>
+          </section>
+
+          <div className="mt-auto flex flex-1 flex-col justify-end pt-12">
+            <div
+              className="mx-auto h-[5px] w-[134px] shrink-0 rounded-full bg-black"
+              aria-hidden
+            />
+          </div>
         </div>
       </div>
-
-      <section className="mt-6 rounded-2xl bg-white p-4 shadow-sm">
-        <p className="font-semibold text-neutral-900">Status: {t.status}</p>
-        <p className="mt-1 text-sm text-neutral-500">{t.paymentMethod}</p>
-        <hr className="my-4 border-neutral-100" />
-        <div className="flex items-center justify-between font-semibold text-neutral-900">
-          <span>Total</span>
-          <span>{formatPlainCurrency(t.amount)}</span>
-        </div>
-
-        <dl className="mt-4 space-y-2 border-t border-neutral-100 pt-4 text-sm">
-          <div className="flex justify-between gap-4">
-            <dt className="text-neutral-500">Description</dt>
-            <dd className="text-right text-neutral-900">{t.description}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-neutral-500">Type</dt>
-            <dd className="text-right capitalize text-neutral-900">{t.type}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-neutral-500">Pending</dt>
-            <dd className="text-right text-neutral-900">{t.pending ? 'Yes' : 'No'}</dd>
-          </div>
-          {t.authorizedUser ? (
-            <div className="flex justify-between gap-4">
-              <dt className="text-neutral-500">Authorized user</dt>
-              <dd className="text-right text-neutral-900">{t.authorizedUser}</dd>
-            </div>
-          ) : null}
-          {t.cashbackPercent != null ? (
-            <div className="flex justify-between gap-4">
-              <dt className="text-neutral-500">Cashback</dt>
-              <dd className="text-right text-neutral-900">{t.cashbackPercent}%</dd>
-            </div>
-          ) : null}
-          <div className="flex justify-between gap-4">
-            <dt className="text-neutral-500">Transaction ID</dt>
-            <dd className="break-all text-right text-neutral-900">{t.id}</dd>
-          </div>
-        </dl>
-      </section>
     </MobileShell>
   )
 }

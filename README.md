@@ -1,73 +1,76 @@
-# React + TypeScript + Vite
+# Wallet App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first wallet UI built for a front-end exercise: a **transactions list** with a small dashboard and a **transaction detail** receipt screen. Data is loaded from a local JSON file; there is no backend.
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [React](https://react.dev/) 19 and [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/) for dev server and production builds
+- [Tailwind CSS](https://tailwindcss.com/) v4 (`@tailwindcss/vite`)
+- [React Router](https://reactrouter.com/) for client-side routing
+- [Font Awesome](https://fontawesome.com/) (React + solid + brand icons)
+- [Vitest](https://vitest.dev/) for unit tests
 
-## React Compiler
+Package manager: **pnpm**.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) (current LTS is fine)
+- [pnpm](https://pnpm.io/installation) (`npm install -g pnpm` or Corepack)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL Vite prints (usually `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Other commands
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | Purpose |
+|--------|---------|
+| `pnpm dev` | Development server with HMR |
+| `pnpm run build` | Typecheck and production build to `dist/` |
+| `pnpm preview` | Serve the production build locally |
+| `pnpm lint` | ESLint |
+| `pnpm run typecheck` | `tsc -b` only |
+| `pnpm test` | Vitest (run once) |
+
+## App behavior
+
+- **Layout:** Single-column mobile shell (max width ~390px) on a light gray page background.
+- **Routes:**
+  - `/` — dashboard (card balance, available credit, daily points, “no payment due”) and the **latest transactions** from JSON (sample data matches the Apple Wallet–style reference).
+  - `/transactions/:id` — receipt-style detail for one transaction.
+- **Data:** [`src/data/wallet.json`](src/data/wallet.json) is the source of truth. Types live in [`src/types/wallet.ts`](src/types/wallet.ts) and the typed export is [`src/data/wallet.ts`](src/data/wallet.ts).
+- **Optional `referenceDate`:** When set on the wallet object in JSON, the app uses it as “today” for relative dates and daily points so the UI stays predictable for demos.
+- **Optional `dailyPointsDisplay`:** When set, the list shows that string for Daily Points (e.g. to match a screenshot); otherwise the seasonal formula value is shown with K-formatting.
+
+Business rules (pending prefix, authorized user before date, payment `+` amounts, seasonal daily points, K-style point formatting, icon tiles with hashed dark backgrounds) are implemented in [`src/lib/`](src/lib/) with tests beside the pure helpers.
+
+## Project structure
+
 ```
+src/
+├── App.tsx                 # Route definitions
+├── main.tsx                # Entry + BrowserRouter
+├── index.css               # Tailwind import + global background
+├── components/             # UI (mobile shell, list, detail)
+├── data/                   # wallet.json + typed re-export
+├── lib/                    # Pure logic + *.test.ts
+└── types/                  # Shared TypeScript types
+```
+
+## Customizing content
+
+Edit **`src/data/wallet.json`** (and keep the shape aligned with `WalletData` in `src/types/wallet.ts`). Rebuild or refresh the dev server to see changes.
+
+## Cursor / AI rules
+
+Project expectations for UI fidelity, spec coverage, and build/test hygiene are summarized in [`.cursor/rules/wallet-app-quality.mdc`](.cursor/rules/wallet-app-quality.mdc).
+
+## License
+
+Private project (`"private": true` in `package.json`).
